@@ -1,0 +1,20 @@
+Классификатор ОКТМО      
+--------------------------------------------------
+Разделитель между полями ...... < ; >
+Признак конца позиции(записи) - <    >
+Объем выгрузки: Позиций - 203131
+ 
+field name,english description,russian description,format
+TER,region code,Код региона,varchar(2)
+KOD1,area code/city MO,Код района/города МО,varchar(3)
+KOD2,the code settlement MO,Код поселения МО,varchar(3)
+KOD3,code locality MO,Код населенного пункта МО,varchar(3)                                   
+KC,контрольное число,numerek(1)
+RAZDEL,code section,Код раздела,varchar(1)
+NAME1,the name of the site,Наименование территории,varchar(500)
+Centrum,additional information,Дополнительная информация,varchar(250)
+NomDescr,Описание,varchar(8000)
+NomAkt,Номер изменения,numerek(3)
+Status,Тип изменения,numerek(1)
+DateUtv,Дата принятия,data(10)
+DateVved,Дата введения,data(10)
