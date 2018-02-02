@@ -1,22 +1,34 @@
 package my.oktmo;
 
-import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.*;
 
 public class OktmoData {
     private ArrayList<Place> places;
-    private TreeSet<String> allStatuses;
+    private Set<String> allStatuses;
     private ArrayList<Place> sortedPlaces;
     private boolean isPlacesChanged=false;
+    private TreeMap<Long, OktmoGroup> commonMapGroups;
+    private TreeMap<Long, Place> placesMap;
+    private TreeMap<String, OktmoGroup> groupsKeyString;
+
     public OktmoData() {
         places=new ArrayList<Place>();
         allStatuses=new TreeSet<String>();
+        commonMapGroups=new TreeMap<Long, OktmoGroup>();
+        placesMap=new TreeMap<Long, Place>();
+        groupsKeyString=new TreeMap<String, OktmoGroup>();
     }
 
     public void addPlace(Place place) {
         places.add(place);
         allStatuses.add(place.getStatus());
+        placesMap.put(place.getCode(), place);
         isPlacesChanged=true;
+    }
+
+    public void addGroup(OktmoGroup group) {
+        commonMapGroups.put(group.getCode(), group);
+        groupsKeyString.put(group.getName(),group);
     }
 
     public ArrayList<Place> getSortedPlaces() {
@@ -31,12 +43,24 @@ public class OktmoData {
         return places;
     }
 
-    public TreeSet<String> getAllStatuses() {
+    public Set<String> getAllStatuses() {
         return allStatuses;
     }
 
     public Place getLastPlace() {
         return places.get(places.size()-1);
+    }
+
+    public TreeMap<Long, Place> getPlacesMap() {
+        return placesMap;
+    }
+
+    public TreeMap<String, OktmoGroup> getGroupsKeyString() {
+        return groupsKeyString;
+    }
+
+    public TreeMap<Long, OktmoGroup> getCommonMap() {
+        return commonMapGroups;
     }
 
     @Override

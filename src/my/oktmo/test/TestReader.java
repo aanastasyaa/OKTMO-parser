@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import static junit.framework.TestCase.assertEquals;
 
 public class TestReader {
-    OktmoData data;
+    private OktmoData data;
 
     @Before
     public void before() {
@@ -25,9 +25,9 @@ public class TestReader {
     public void testData() {
         Place place1= data.getPlaces().get(0);
         Place place2=data.getLastPlace();
-        assertEquals("01601000000", String.format("%011d",place1.getCode()));
-        assertEquals("муниципальный район", place1.getStatus());
-        assertEquals("Алейский муниципальный район", place1.getName());
+        assertEquals("01601402101", String.format("%011d",place1.getCode()));
+        assertEquals("п", place1.getStatus());
+        assertEquals("Алейский", place1.getName());
         assertEquals("99701000001", String.format("%011d",place2.getCode()));
         assertEquals("г",place2.getStatus());
         assertEquals("Биробиджан", place2.getName());
@@ -35,8 +35,8 @@ public class TestReader {
 
     @Test
     public void testRegularExpOvo() {
-        OktmoAnalyzer analyzer=new OktmoAnalyzer();
-        ArrayList<Place> places=analyzer.findPlacesLess6symbolsAndOvo(data);
+        OktmoAnalyzer analyzer=new OktmoAnalyzer(data);
+        ArrayList<Place> places=analyzer.findPlacesLess6symbolsAndOvo();
         System.out.println(places.toString());
         assertEquals("Яново", places.get(0).getName());
 
@@ -45,8 +45,8 @@ public class TestReader {
 
     @Test
     public void testRegularSameConsonant() {
-        OktmoAnalyzer analyzer=new OktmoAnalyzer();
-        ArrayList<Place> places=analyzer.findSameConsonant(data);
+        OktmoAnalyzer analyzer=new OktmoAnalyzer(data);
+        ArrayList<Place> places=analyzer.findSameConsonant();
         System.out.println(places.toString());
     }
 }
