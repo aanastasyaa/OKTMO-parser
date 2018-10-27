@@ -2,6 +2,12 @@ package my.oktmo;
 
 import java.util.Comparator;
 
+/**
+ * Представляет собой населенный пункт согласно классификации ОКТМО.
+ * Каждый населенный пункт имеет свой код из 11 цифр,
+ * название и статус.
+ * Реализован Comparator для упорядочивания по name
+ */
 public class Place /*implements Comparable<Place>*/ {
   private long code;
   private String status;

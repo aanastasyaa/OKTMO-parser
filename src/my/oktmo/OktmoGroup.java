@@ -2,6 +2,11 @@ package my.oktmo;
 
 import java.util.ArrayList;
 
+/**
+ * Представляет собой муниципальное образование, которое может быть
+ * регионом, районом или поселением, на это указывает свойство level.
+ * Имеет также код типа Long, название и список вложеннных OktmoGroup, принадлежащих данному муниципальному образованию
+ */
 public class OktmoGroup {
     private OktmoLevel level;
     private String name;

@@ -4,7 +4,7 @@ import my.oktmo.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -44,7 +44,7 @@ public class TestReaderLaba3 {
         OktmoGroup group=data.getCommonMap().get(7721000000L);
         System.out.println(group.getCode()+" "+group.getLevel()+" "+group.getName());
         OktmoAnalyzer analyzer=new OktmoAnalyzer(data);
-        ArrayList<Place> list=analyzer.findAllPlacesInGroup(group);
+        List<Place> list=analyzer.findAllPlacesInGroup(group);
         assertEquals(52,list.size());
     }
 

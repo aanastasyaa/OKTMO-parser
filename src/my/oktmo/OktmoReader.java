@@ -11,11 +11,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class OktmoReader {//считывает .txt
+/**
+ * Считывает населенные пункты и муниципальные образования из текстового файла,
+ * содержащего классификацию ОКТМО
+ */
+public class OktmoReader {
+
+    /**
+     * Данные строки - начала записей из файла, которые нужно отфильтровать
+     */
     private static final String[] start= new String[] { "Городские поселения", "Городские округа",
             "Межселенные территории", "Внутригородские муниципальные образования", "Населенные пункты, входящие в ",
             "Сельские поселения", "Муниципальные районы", "Муниципальные пункты"
     };
+
     private boolean checkIsIncludeUseName(String name) {//true, если прошел проверку
 
         for(int i=0; i<start.length; ++i)
@@ -24,23 +33,29 @@ public class OktmoReader {//считывает .txt
         return true;
     }
 
-    private Pattern forLine=Pattern.compile(//кавычки есть
-            "^\"(\\d{2})\";"+
-                    "\"(\\d{3})\";"+
-                    "\"(\\d{3})\";"+
-                    "\"(\\d{3})\";"+
-                    "\"(\\d)\";"+
-                    "\"(\\d)\";"+
-                    "\"((?:[а-я|/|-]*\\s)*)"+//статус //?: для того, чтобы внутренняя группа не сохранялась (для ст ж/д это ж/д)
-                    //"((?:[А-ЯЁ№][а-я0-9|/|-]+)(?:[а-я0-9|/|-|\\s]*))\""//название
-                    //"\"(.*)\";"+"\"(.*)\";"+"\"(.*)\";"+"(.*);"+"(.*);"+"(.*);"
-                    "((?:[А-ЯЁ№][А-Яа-яЁё0-9/\\-\\s]+))\";"
+    private Pattern forLine=Pattern.compile(
+                    "^\"(\\d{2})\";"
+                    +"\"(\\d{3})\";"
+                    +"\"(\\d{3})\";"
+                    +"\"(\\d{3})\";"
+                    +"\"(\\d)\";"
+                    +"\"(\\d)\";"
+                    +"\"((?:[а-я|/|-]*\\s)*)"//статус //?: для того, чтобы внутренняя группа не сохранялась (для ст ж/д - это ж/д)
+                    +"((?:[А-ЯЁ№][А-Яа-яЁё0-9/\\-\\s]+))\";"
     );
 
+    //нужны для метода readPlacesAndGroups
     private OktmoGroup lastRegion=null;
     private OktmoGroup lastRayon=null;
     private OktmoGroup lastPoselenie=null;
 
+    /**
+     * Считывает и парсит строки из файла
+     * Записывает в data иерархию муниципальных образований
+     * @param fileName - имя текстового файла, которые содержит классификацию ОКТМО
+     * @param data - объект OktmoData, в который будет занесены муниципальные образования OktmoGroup
+     *             и населенные пункты Place
+     */
     public void readPlacesAndGroups(String fileName, OktmoData data) {
         try(Stream<String> lines= Files.lines(Paths.get(fileName), Charset.forName("cp1251"))) {
             //применяем регулярное выражение и фильтруем записи с помощью checkIsIncludeUseName
@@ -53,23 +68,6 @@ public class OktmoReader {//считывает .txt
                     long code=Long.parseLong(line.group(1)+line.group(2)+line.group(3)+line.group(4));
                     String name = line.group(8);
                     String status=line.group(7).trim();
-                    /*if (line.group(2).equals("000")) {//регион
-                        lastRegion=new OktmoGroup(OktmoLevel.Region, code, name);
-                        data.addGroup(lastRegion);
-                    }
-                    else if(line.group(3).equals("000")) {//район
-                        lastRayon=new OktmoGroup(OktmoLevel.Rayon,code, name);
-                        lastRegion.addChildGroup(lastRayon);
-                        data.addGroup(lastRayon);
-                    }
-                    else if(line.group(4).equals("000")) {//поселение
-                        lastPoselenie=new OktmoGroup(OktmoLevel.Poselenie, code, name);
-                        lastRayon.addChildGroup(lastPoselenie);
-                        data.addGroup(lastPoselenie);
-                    }
-                    else {//насел пункт
-                        data.addPlace(new Place(code,status,name));
-                    }*/
 
                     if(!line.group(4).equals("000")) {
                         data.addPlace(new Place(code, status, name));
@@ -102,6 +100,13 @@ public class OktmoReader {//считывает .txt
 
     }
 
+    /**
+     * Считывает и парсит строки из файла
+     * без использования регулярного выражения и Stream.
+     * Записывает в data все населенные пункты Place
+     * @param fileName - имя текстового файла, которые содержит классификацию ОКТМО
+     * @param data - объект OktmoData, в который будут занесены населенные пункты Place
+     */
     public void readPlaces(String fileName, OktmoData data) {
         int line=0;
         try(BufferedReader reader=new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "cp1251"))) {
@@ -110,27 +115,16 @@ public class OktmoReader {//считывает .txt
                 line++;
                 String[] substrs=s.split(";");
 
-
                 for (int i = 0; i < 7; i++) {//избавляемся от лишних кавычек
                     int len=substrs[i].length();
                     substrs[i]=substrs[i].substring(1,len-1);
                 }
-                //System.out.println(Arrays.toString(substrs));
-                if(!checkIsIncludeUseName(substrs[6]))
+
+                if(substrs[3].equals("000"))
                     continue;
-                if(substrs[1].equals("000"))
-                    continue;
-                if(substrs[6].startsWith("Населенные пункты, входящие")) {//определяем status предыдущей строки
-                    if (substrs[6].contains("городского округа"))
-                        data.getLastPlace().setStatus("городской округ");
-                    else if (substrs[6].contains("городского поселения"))
-                        data.getLastPlace().setStatus("городское поселение");
-                    else data.getLastPlace().setStatus("сельское поселение");
-                    continue;
-                }
 
                 Place place = parsePlace(substrs);
-                //System.out.println(line+" "+place.getStatus()+" "+place.getName());
+
                 data.addPlace(place);
             }
 
@@ -139,30 +133,26 @@ public class OktmoReader {//считывает .txt
             System.out.println("Reading error in line " + line);
             e.printStackTrace();
         }
-        //System.out.println(data.toString());
+
     }
 
     private Place parsePlace(String[] substrs) {
         String code=substrs[0]+substrs[1]+substrs[2]+substrs[3];
         String name=substrs[6];
         String status;
-        if(name.endsWith("муниципальный район"))
-            status="муниципальный район";
-        else if(name.endsWith("наслег"))
-            status="наслег";
-        else {
-            //50859, 50861
-            int i;
-            for (i=0; i<name.length(); ++i) {//50568 "п ж/д ст"
-                if(name.charAt(i)>='А' && name.charAt(i)<='Я' || name.charAt(i)=='Ё' || name.charAt(i)>='0' && name.charAt(i)<='9')
-                    break;
-            }
-            if(i>0) {
-                status = name.substring(0, i - 1);
-                name = name.substring(i);
-            }
-            else status="";
+
+        //50859, 50861
+        int i;
+        for (i=0; i<name.length(); ++i) {//50568 "п ж/д ст"
+            if(name.charAt(i)>='А' && name.charAt(i)<='Я' || name.charAt(i)=='Ё' || name.charAt(i)>='0' && name.charAt(i)<='9')
+                break;
         }
+        if(i>0) {
+            status = name.substring(0, i - 1);
+            name = name.substring(i);
+        }
+        else status="";
+        name=name.split(" |,")[0];//п Тактыбай, остановочный пункт
         return new Place(Long.parseLong(code), status, name);
     }
 }

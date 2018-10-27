@@ -2,11 +2,21 @@ package my.oktmo;
 
 import java.util.*;
 
+/**
+ * Представляет собой хранилище для населенных пунктов, муниципальных образований,
+ * статусов НП, полученных при чтении файла с классификацией ОКТМО.
+ * Содержит методы доступа к приватным полям класса.
+ */
 public class OktmoData {
+
     private ArrayList<Place> places;
     private Set<String> allStatuses;
     private ArrayList<Place> sortedPlaces;
+
+    //определяет необходимость проведения сортировки sortedPlaces в методе getSortedPlaces
+    //принимает значение true, когда в список places добавили новый НП
     private boolean isPlacesChanged=false;
+
     private TreeMap<Long, OktmoGroup> commonMapGroups;
     private TreeMap<Long, Place> placesMap;
     private TreeMap<String, OktmoGroup> groupsKeyString;
@@ -65,11 +75,6 @@ public class OktmoData {
 
     @Override
     public String toString() {
-        /*String res="";
-        for (Place place: places ) {
-            res+=place.toString()+"\n";
-        }
-        return res;*/
         return places.toString();
     }
 }
