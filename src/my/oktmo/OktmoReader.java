@@ -50,11 +50,10 @@ public class OktmoReader {
     private OktmoGroup lastPoselenie=null;
 
     /**
-     * Считывает и парсит строки из файла
+     * Считывает и парсит строки из файла.
      * Записывает в data иерархию муниципальных образований
-     * @param fileName - имя текстового файла, которые содержит классификацию ОКТМО
-     * @param data - объект OktmoData, в который будет занесены муниципальные образования OktmoGroup
-     *             и населенные пункты Place
+     * @param fileName  имя текстового файла, который содержит классификацию ОКТМО
+     * @param data      объект {@code OktmoData}, в который будет занесены муниципальные образования {@code OktmoGroup} и населенные пункты {@code Place}
      */
     public void readPlacesAndGroups(String fileName, OktmoData data) {
         try(Stream<String> lines= Files.lines(Paths.get(fileName), Charset.forName("cp1251"))) {
@@ -103,9 +102,9 @@ public class OktmoReader {
     /**
      * Считывает и парсит строки из файла
      * без использования регулярного выражения и Stream.
-     * Записывает в data все населенные пункты Place
-     * @param fileName - имя текстового файла, которые содержит классификацию ОКТМО
-     * @param data - объект OktmoData, в который будут занесены населенные пункты Place
+     * Записывает в data все населенные пункты {@code Place}
+     * @param fileName  имя текстового файла, которые содержит классификацию ОКТМО
+     * @param data      объект {@code OktmoData}, в который будут занесены населенные пункты {@code Place}
      */
     public void readPlaces(String fileName, OktmoData data) {
         int line=0;
