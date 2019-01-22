@@ -35,8 +35,8 @@ public class OktmoAnalyzer {//анализ объектов OktmoData
 
     /**
      * Поиск объектов Place, название которых удовлетворяет регулярному выражению
-     * @param regexp - регулярное выражение, критерий поиска
-     * @return - найденные ArrayList<Place>, соответствующие регулярному выражению
+     * @param regexp    регулярное выражение, критерий поиска
+     * @return          список найденных <code>Place</code>, соответствующих регулярному выражению
      */
     private ArrayList<Place> checkPlaces(Pattern regexp) {
         ArrayList<Place> finding=new ArrayList<Place>();
@@ -50,8 +50,8 @@ public class OktmoAnalyzer {//анализ объектов OktmoData
     /**
      * Метод, возвращающий List населенных пунктов Place,
      * которые относятся к данному OktmoGroup.
-     * @param group - объект OktmoGroup, по которому ведется поиск
-     * @return - List<Place> НП, относящихся к group
+     * @param group     объект <code>OktmoGroup</code>, по которому ведется поиск
+     * @return          список <code>Place</code> - НП, относящихся к group
      */
     public List<Place> findAllPlacesInGroup(OktmoGroup group) {
         Long startCode=group.getCode();
@@ -68,8 +68,8 @@ public class OktmoAnalyzer {//анализ объектов OktmoData
 
     /**
      * Находит самое популярное название населенного пункта в регионе
-     * @param regionName - название региона
-     * @return - самое популярное название НП
+     * @param regionName    название региона
+     * @return              самое популярное название НП или <code>null</code>, если регион с таким названием не найден
      */
     public String findMostPopularPlaceName(String regionName) {
         if(!data.getGroupsKeyString().containsKey(regionName))
@@ -86,10 +86,10 @@ public class OktmoAnalyzer {//анализ объектов OktmoData
     }
 
     /**
-     * Метод подсчитывает количество населенных пунктов с каждым статусом в регионе regionName
-     * и возвращает таблицу с количеством НП с каждым статусом
-     * @param regionName - название региона
-     * @return - Map<String, Long>, где String - статус и Long - количество НП с таким статусом
+     * Метод подсчитывает количество населенных пунктов с каждым статусом в регионе {@code regionName}
+     * и возвращает {@code Map<String, Long>}, в котором каждому статусу соответствует число - количество НП с таким статусом
+     * @param regionName    название региона
+     * @return              {@code Map<String, Long>}, где String - статус и Long - количество НП с таким статусом
      */
     public Map<String, Long> printStatusTableForRegion(String regionName) {
         if(!data.getGroupsKeyString().containsKey(regionName))
